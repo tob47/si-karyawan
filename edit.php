@@ -1,6 +1,6 @@
 <div style="border:1px solid rgb(238,238,238); padding:10px; overflow:auto; width:1110px; height:375px;">
 <?php
-$Open = mysql_connect("localhost","root","");
+$Open = mysqli_connect("localhost","root","");
 		if (!$Open){
 		die ("Koneksi ke Engine MySQL Gagal !<br>");
 		}

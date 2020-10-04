@@ -1,50 +1,104 @@
 <?php
-	$Open = mysql_connect("localhost","root","");
-	$Koneksi = mysql_select_db("smsddc");
-	$Lapor = "SELECT Name, Number, alamat  FROM pbk ORDER by Name asc";
-	$Hasil = mysql_query($Lapor);
-	$Data = array();
-	while($row = mysql_fetch_assoc($Hasil)){
-		array_push($Data, $row);
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$mpdf = new \Mpdf\Mpdf();
+
+$html ='
+<html>
+<style>
+
+	#data th{
+		background-color :  #3399ff;
 	}
-	$Judul = "Summary Data Phonebooks SMS Center";
-	$tgl= "Time : ".date("l, d F Y");
-	$Header= array(
-		array("label"=>"Nama", "length"=>50, "align"=>"C"),
-		array("label"=>"Nomer", "length"=>52, "align"=>"C"),
-		array("label"=>"Alamat", "length"=>50, "align"=>"C"), 
-	);
-	require ("fpdf16/fpdf.php");
-	$pdf = new FPDF();
-	$pdf->AddPage('P','A4','C');
-	//judul
-	$pdf->SetFont('arial','B','14');
-	$pdf->Cell(0, 10, $Judul, '0', 1, 'C');
-	//tanggal
-	$pdf->SetFont('arial','i','8');
-	$pdf->Cell(0, 10, $tgl, '0', 1, 'L');
-	//header
-	$pdf->SetFont('arial','B','10');
-	$pdf->SetFillColor(190,190,0);
-	$pdf->SetTextColor(255);
-	$pdf->setDrawColor(128,0,0);
-	foreach ($Header as $Kolom){
-		$pdf->Cell($Kolom['length'], 8, $Kolom['label'], 1, '0', $Kolom['align'], true);
+
+	#data tr{
+		background-color :   #b3d9ff;
 	}
-	$pdf->Ln();	 //menampilkan data
-	$pdf->SetFillColor(244,235,255);
-	$pdf->SettextColor(0);
-	$pdf->SetFont('arial','','9');
-	$fill =false;
-	foreach ($Data as $Baris){
-		$i= 0;
-		foreach ($Baris as $Cell){
-			$pdf->Cell ($Header[$i]['length'], 8, $Cell, 1, '0', $Kolom['align'], $fill);
-			$i++;
+
+	#data tr:nth-child(even){
+		background-color :  #cce6ff;
+	}
+
+
+
+</style>
+
+<h1>Data Karyawan</h1>
+
+<table width="1420" border="1" align="center" cellpadding="0" cellspacing="0">
+<tr bgcolor="#FFA800">
+	<th width="30">No</td>
+	<th width="60" height="42">NIK</td>
+	<th width="180">Nama</td>
+	<th width="70">Foto</td>      
+	<th width="55">Jenis Kelamin</td>
+	<th width="70">Jabatan</td>
+	<th width="100">Departemen</td>
+	<th width="80">Tempat Lahir</td>
+	<th width="90">Tanggal Lahir</td>
+	<th width="50">Gol Darah</td>
+	<th width="70">Agama</td>
+	<th width="60">Status Kawin</td>
+	<th width="110">Telpon</td>
+	<th width="200">Email</td>   
+</tr>';
+
+$koneksi=mysqli_connect("localhost","root","","karyawan");
+	$Cari="SELECT * FROM data_karyawan ORDER BY nik";
+	$Tampil = mysqli_query($koneksi,$Cari);
+	$nomer=0;
+    while (	$hasil = mysqli_fetch_array ($Tampil)) {
+			$nik = stripslashes ($hasil['nik']);
+			$nama = stripslashes ($hasil['nama']);
+			$namafoto = stripslashes ($hasil['namafoto']);
+			$foto = $hasil['namafoto'];
+			$jk = stripslashes ($hasil['jk']);
+			$jab = stripslashes ($hasil['jab']);
+			$dept = stripslashes ($hasil['dept']);
+			$tmp_lhr = stripslashes ($hasil['tmp_lhr']);
+			$tgl_lhr = $hasil['tgl_lhr'];
+			$gol_darah = stripslashes ($hasil['gol_darah']);
+			$agama = stripslashes ($hasil['agama']);
+			$status = stripslashes ($hasil['status']);
+			$telp = stripslashes ($hasil['telp']);
+			$email = stripslashes ($hasil['email']);
+		{
+	$nomer++;
+
+	$html .= '<tr align="center">
+	<td>'.$nomer.'
+	<div align="center"></div></td>
+	<td>'.$nik.'
+	<div align="center"></div></td>
+	<td>'.$nama.'
+	<div align="center"></div></td>';
+		if (empty($foto)) {
+		$html .="<td><strong><img src='images/nopic.gif' width='70' height='110'><br> No Image </strong></td>";
+		};
+	$html .='
+	<td>'.$jk.'<div align="center"></div></td>
+	<td>'.$jab.'<div align="center"></div></td>
+	<td>'.$dept.'<div align="center"></div></td>
+	<td>'.$tmp_lhr.'<div align="center"></div></td>';
+
+		if ($hasil['tgl_lhr'] === NULL){
+			$hasil['tgl_lhr'] = "NULL"; 
+		};
+		
+	$html .='<td>'.$tgl_lhr.'<div align="center"></div></td>
+	<td>'.$gol_darah.'<div align="center"></div></td>
+	<td>'.$agama.'<div align="center"></div></td>
+	<td>'.$status.'<div align="center"></div></td>
+	<td>'.$telp.'<div align="center"></div></td>
+	<td>'.$email.'<div align="center"></div></td>';
 		}
-		$fill = !$fill;
-		$pdf->Ln();
-	}
-	//output
-	$pdf->Output();
+	};
+
+$html .='</table>
+</html>
+';
+$mpdf->WriteHTML($html);
+$mpdf->Output();
+
 ?>

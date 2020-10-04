@@ -5,24 +5,20 @@
 	<input type="submit" name="submit" id="submit" value="CARI">
 </form>
 <?php
-$Open = mysql_connect("localhost","root","");
-	if (!$Open){
-	die ("Koneksi ke Engine MySQL Gagal !<br>");
-		}
-$Koneksi = mysql_select_db("karyawan");
-	if (!$Koneksi){
+$koneksi = mysqli_connect("localhost","root","","karyawan");
+	if (!$koneksi){
 	die ("Koneksi ke Database Gagal !");
 	}
 //menampilkan data
 if ((isset($_POST['submit'])) AND ($_POST['search'] <> "")) {
   $search = $_POST['search'];
-  $sql = mysql_query("SELECT * FROM data_karyawan WHERE nama LIKE '$search%' ") or die(mysql_error());
+  $sql = mysqli_query($koneksi,"SELECT * FROM data_karyawan WHERE nama LIKE '%$search%' ") or die(mysqli_error());
 	//menampilkan jumlah hasil pencarian
-  $jumlah = mysql_num_rows($sql); 
+  $jumlah = mysqli_num_rows($sql); 
   if ($jumlah > 0) {
     echo '<p>Ada '.$jumlah.' data yang sesuai.</p>';
 	$nomer=0;
-    while (	$hasil = mysql_fetch_array ($sql)) {
+    while (	$hasil = mysqli_fetch_array ($sql)) {
 		$nik = stripslashes ($hasil['nik']);
 		$nama = stripslashes ($hasil['nama']);
 		$namafoto = stripslashes ($hasil['namafoto']);
@@ -124,14 +120,13 @@ if ((isset($_POST['submit'])) AND ($_POST['search'] <> "")) {
 		<td>&nbsp;</td>
 	</tr>
 </table>
-<?
+<?php
     }
 	else {
    // menampilkan pesan zero data
 		echo 'Maaf, hasil pencarian tidak ditemukan.';
 	}
 }
-//Tutup koneksi engine MySQL
-	mysql_close($Open);
+
 ?>
 </div>

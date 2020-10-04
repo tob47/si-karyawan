@@ -36,23 +36,16 @@ if ($_POST['Submit'] == "Submit") {
 	//Jika Validasi Terpenuhi
 	else {
 	//buka koneksi ke engine MySQL
-	$Open = mysql_connect("localhost","root","");
-		if (!$Open){
-		die ("Koneksi ke Engine MySQL Gagal !<br>");
-		}
-		else{
-		print ("Engine Connected<br>");
-		}
-	//koneksi ke database
-	$Koneksi = mysql_select_db("karyawan");
-		if (!$Koneksi){
+	$koneksi = mysqli_connect("localhost","root","","karyawan");
+
+		if (!$koneksi){
 		die ("Koneksi ke Database Gagal !");
 		}
 		else{
 		print ("Database Connected<br><br>");
 		}
 //cek NIK di database
-$cek=mysql_num_rows (mysql_query("SELECT nik FROM data_karyawan WHERE nik='$_POST[nik]'"));
+$cek=mysqli_num_rows (mysqli_query($koneksi,"SELECT nik FROM data_karyawan WHERE nik='$_POST[nik]'"));
 if ($cek > 0) {
 ?>
 		<script language="JavaScript">
@@ -64,7 +57,7 @@ if ($cek > 0) {
 //Masukan data ke Table Karyawan
 $input	="INSERT INTO data_karyawan (nik, nama, namafoto, jk, jab, dept, tmp_lhr, tgl_lhr, gol_darah, agama, status, telp, email)
 		VALUES ('$nik','$nama','$namafoto','$jk','$jab','$dept','$tmp_lhr','$tgl_lhr','$gol_darah','$agama','$status','$telp','$email')";
-$query_input =mysql_query($input);
+$query_input =mysqli_query($koneksi,$input);
 	if ($query_input) {
 	//Jika Sukses
 ?>
@@ -78,8 +71,6 @@ $query_input =mysql_query($input);
 	//Jika Gagal
 	echo "Data Pribadi Karyawan Gagal diinput, Silahkan diulangi!";
 	}
-//Tutup koneksi engine MySQL
-	mysql_close($Open);
 	}
 }
 ?>

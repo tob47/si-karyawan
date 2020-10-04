@@ -7,18 +7,14 @@ if (isset($_GET['nik'])) {
 	die ("Error. Tidak ada Nik yang dipilih Silakan cek kembali! ");	
 }
 //koneksi ke engine mysql
-$Open = mysql_connect("localhost","root","");
-		if (!$Open){
-		die ("Koneksi ke Engine MySQL Gagal !<br>");
-		}
-$Koneksi = mysql_select_db("karyawan");
-		if (!$Koneksi){
+$koneksi = mysqli_connect("localhost","root","","karyawan");
+		if (!$koneksi){
 		die ("Koneksi ke Database Gagal !");
 		}		
 //Tampilkan datanya dari tabel karyawan
 $tampil_karyawan = "SELECT * FROM data_karyawan WHERE nik='$nik'";
-$sql = mysql_query ($tampil_karyawan);
-$hasil_p = mysql_fetch_array ($sql);
+$sql = mysqli_query ($koneksi,$tampil_karyawan);
+$hasil_p = mysqli_fetch_array ($sql);
 	$nik = $hasil_p['nik'];
 	$nama = $hasil_p['nama'];
 	$namafoto = stripslashes ($hasil_p['namafoto']);
@@ -146,8 +142,5 @@ $hasil_p = mysql_fetch_array ($sql);
 		</tr>
 </table>
 </form>
-<?php
-//Tutup koneksi engine MySQL
-	mysql_close($Open);
-?>
+
 </div>

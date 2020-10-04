@@ -5,19 +5,16 @@
 	<input type="submit" name="submit" id="submit" value="GO">
 </form>
 <?php
-$Open = mysql_connect("localhost","root","");
-	if (!$Open){
-	die ("Koneksi ke Engine MySQL Gagal !<br>");
-		}
-$Koneksi = mysql_select_db("karyawan");
-	if (!$Koneksi){
+$koneksi= mysqli_connect("localhost","root","","karyawan");
+
+	if (!$koneksi){
 	die ("Koneksi ke Database Gagal !");
 	}
 //menampilkan data
 if ((isset($_POST['submit'])) AND ($_POST['cariedit'] <> "")) {
   $nik = $_POST['cariedit'];
-  $sql = mysql_query ("SELECT * FROM data_karyawan WHERE nik='$nik' ") or die(mysql_error());
-	$hasil = mysql_fetch_array ($sql);
+  $sql = mysqli_query ($koneksi,"SELECT * FROM data_karyawan WHERE nik='$nik' ") or die(mysql_error());
+	$hasil = mysqli_fetch_array ($sql);
 	$nik = stripslashes ($hasil['nik']);
 	$nama = stripslashes ($hasil['nama']);
 	if (!$hasil) {
@@ -36,7 +33,6 @@ if ((isset($_POST['submit'])) AND ($_POST['cariedit'] <> "")) {
 				</font></ol>';
 	} 
 }
-//Tutup koneksi engine MySQL
-	mysql_close($Open);
+
 ?>
 </div>
