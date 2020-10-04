@@ -1,8 +1,25 @@
 <div style="border:1px solid rgb(238,238,238); padding:10px; overflow:auto; width:1110px; height:375px;">
+<style>
+
+	#data th{
+		background-color :  #3399ff;
+	}
+
+	#data tr{
+		background-color :   #b3d9ff;
+	}
+
+	#data tr:nth-child(even){
+		background-color :  #cce6ff;
+	}
+
+
+
+</style>
 <h2 align="center"><font color="orange" size="4" face="arial"><b>Data Karyawan</b></font></h2><br>
-<input type="button" class="btn btn-info" value="Export To PDF" title="Save as PDF Format" onclick=window.open('report_data.php','_blank');><br><br>
-<table width="1420" border="0" align="center" cellpadding="0" cellspacing="0">
-<tr bgcolor="#FFA800">
+<input type="button" class="btn btn-info" value="Export To PDF"  onclick=window.open('report_data.php','_blank');><br><br>
+<table id="data" width="1420" border="0" align="center" cellpadding="0" cellspacing="0">
+<tr >
 	<th width="30">No</td>&nbsp;
 	<th width="60" height="42">NIK</td>&nbsp;
 	<th width="180">Nama</td>&nbsp;
@@ -20,18 +37,11 @@
 	<th width="100">Action</td>&nbsp;     
 </tr>
 <?php
-	$Open = mysql_connect("localhost","root","");
-		if (!$Open){
-		die ("Koneksi ke Engine MySQL Gagal !<br>");
-		}
-	$Koneksi = mysql_select_db("karyawan");
-		if (!$Koneksi){
-		die ("Koneksi ke Database Gagal !");
-		}
+	$koneksi=mysqli_connect("localhost","root","","karyawan");
 	$Cari="SELECT * FROM data_karyawan ORDER BY nik";
-	$Tampil = mysql_query($Cari);
+	$Tampil = mysqli_query($koneksi,$Cari);
 	$nomer=0;
-    while (	$hasil = mysql_fetch_array ($Tampil)) {
+    while (	$hasil = mysqli_fetch_array ($Tampil)) {
 			$nik = stripslashes ($hasil['nik']);
 			$nama = stripslashes ($hasil['nama']);
 			$namafoto = stripslashes ($hasil['namafoto']);
@@ -49,23 +59,6 @@
 		{
 	$nomer++;
 ?>
-	<tr align="center" bgcolor="#DFE6EF">
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
 	<tr align="center">
 		<td><?=$nomer?>
 		<div align="center"></div></td>
@@ -73,12 +66,10 @@
 		<div align="center"></div></td>
 		<td><?=$nama?>
 		<div align="center"></div></td>
-		<td><? 
-			if (empty($foto)) 
-		        echo "<strong><img src='images/nopic.gif' width='70' height='110'> <br> No Image </strong>";
-		        else
-				echo "<img class='shadow' src='images/$foto' width='70' height='110' title='$nama' >";
-				?>&nbsp;</td>
+		<td><?php
+			if (empty($foto)) {
+			echo "<strong><img src='images/nopic.gif' width='70' height='110'><br> No Image </strong>";
+			}?></td>
 		<td><?=$jk?><div align="center"></div></td>
 		<td><?=$jab?><div align="center"></div></td>
 		<td><?=$dept?><div align="center"></div></td>
@@ -93,30 +84,12 @@
 		<td><?=$status?><div align="center"></div></td>
 		<td><?=$telp?><div align="center"></div></td>
 		<td><?=$email?><div align="center"></div></td>
-		<td bgcolor="#EEF2F7"><div align="center"><a href="index.php?page=detail&nik=<?=$nik?>">Detail</a> | <a href="index.php?page=delete&nik=<?=$nik?>" OnClick="return confirm('Anda Yakin Seluruh Data Karyawan  <?=$nik?> Atas Nama <?=$nama?>  akan dihapus?');">Delete</a></div></td>
-	</tr>
-	<tr align="center" bgcolor="#DFE6EF">
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td> 
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
-		<td>&nbsp;</td>
+		<td bgcolor="#EEF2F7"><div align="center"><a href="index.php?page=detail&nik=<?=$nik?>">Detail</a> | <a href="index.php?page=delete&nik=<?=$nik?>" OnClick="return confirm('Anda Yakin Seluruh Data Karyawan  <?=$nik?> Atas Nama <?=$nama?>  akan dihapus?'">Delete</a></div></td>
 	</tr>
 <?php  
 		}
 	}
-//Tutup koneksi engine MySQL
-	mysql_close($Open);
+
 ?>
 </table>
 </div>
